@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Inject PAT into index.html
-        run: sed -i "s/__REVIEW_PAT__/${{ secrets.MD_REDWOLF }}/g" index.html
+        run: sed -i "s/__REVIEW_PAT__/${{ secrets.MD_ASISNZ }}/g" index.html
 
       - uses: actions/configure-pages@v5
 

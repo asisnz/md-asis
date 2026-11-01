@@ -1,6 +1,6 @@
 ---
 name: fetch-linkedin
-description: Use during STEP 1a (RESEARCH / fetch()) of a Red Wolf content batch. Reads the cached per-connection LinkedIn snapshots in the single MAY/LOG-<quarter>.log — written weekly by the fetch-linkedin GitHub Action — instead of calling LinkedIn directly, which blocks unauthenticated fetch(). Summarizes recent partner/association activity to inform STEP 1b subtype selection.
+description: Use during STEP 1a (RESEARCH / fetch()) of a ASIS New Zealand content batch. Reads the cached per-connection LinkedIn snapshots in the single MAY/LOG-<quarter>.log — written weekly by the fetch-linkedin GitHub Action — instead of calling LinkedIn directly, which blocks unauthenticated fetch(). Summarizes recent partner/association activity to inform STEP 1b subtype selection.
 ---
 
 # fetch-linkedin
@@ -30,7 +30,7 @@ replaces the old instruction to `fetch()` each LinkedIn page URL directly.
 
    | Connection                              | Group        | Slug         |
    |------------------------------------------|--------------|--------------|
-   | Red Wolf High Level Security Ltd         | own          | REDWOLF      |
+   | ASIS New Zealand         | own          | ASISNZ      |
    | New Zealand Security Association (NZSA)  | associations | NZSA         |
    | ASIS International                       | associations | ASIS         |
    | NZ Police                                | associations | NZPOLICE     |

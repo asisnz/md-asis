@@ -4,7 +4,7 @@ Called by .github/workflows/fetch-linkedin.yml (weekly cron).
 
 Reads CAN/TREE-2026Q3.json's connections{}, maps each to its fixed slug
 (same table as .claude/skills/fetch-linkedin/SKILL.md — keep both in
-sync if connections{} ever changes), and calls py-redwolf's listener
+sync if connections{} ever changes), and calls py-asis's listener
 once per connection, sequentially with a pause between calls, prepending
 each successful response as a new dated entry at the top of the single
 MAY/LOG-2026Q3.log (one `## <fetchedAt> <SLUG>` entry per connection per run).
@@ -37,7 +37,7 @@ LOG_PATH = REPO_ROOT / "MAY" / f"LOG-{QUARTER}.log"
 
 # Must match .claude/skills/fetch-linkedin/SKILL.md's mapping table.
 SLUG_MAP = {
-    "Red Wolf High Level Security Ltd": "REDWOLF",
+    "ASIS New Zealand": "ASISNZ",
     "New Zealand Security Association (NZSA)": "NZSA",
     "ASIS International": "ASIS",
     "NZ Police": "NZPOLICE",
@@ -74,7 +74,7 @@ def fetch_one(base_url: str, slug: str, company_name: str, url: str,
     qs = urllib.parse.urlencode({"slug": slug, "companyName": company_name, "url": url})
     full_url = f"{base_url}?{qs}"
     headers = {
-        "User-Agent": "redwolf-linkedin-fetch/1.0 (+https://github.com/redwolfnz/md-redwolf)",
+        "User-Agent": "redwolf-linkedin-fetch/1.0 (+https://github.com/asisnz/md-asis)",
     }
     if cf_client_id and cf_client_secret:
         headers["CF-Access-Client-Id"] = cf_client_id

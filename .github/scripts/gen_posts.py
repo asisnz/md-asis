@@ -34,7 +34,7 @@ SKILL_PATH   = Path(".claude/skills/generate-post/SKILL.md")
 FETCH_ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
 
 SLUG_ORDER = [
-    "REDWOLF", "NZSA", "ASIS", "NZPOLICE",
+    "ASISNZ", "NZSA", "ASIS", "NZPOLICE",
     "JOHNSON", "GALLAGHER", "INNERRANGE", "BOSCH", "ICT", "JACQUES",
 ]
 

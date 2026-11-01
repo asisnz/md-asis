@@ -1,11 +1,11 @@
-# Red Wolf — LinkedIn Content Orchestration Pipeline
-# Client: Red Wolf High Level Security Ltd
+# ASIS New Zealand — LinkedIn Content Orchestration Pipeline
+# Client: ASIS New Zealand
 # Platform: LinkedIn
 # Last updated: 2026-10-27
 
 meta:
-  name: Red Wolf LinkedIn Content Orchestration
-  client: Red Wolf High Level Security Ltd
+  name: ASIS New Zealand LinkedIn Content Orchestration
+  client: ASIS New Zealand
   platform: LinkedIn
   quarter: 2026Q3
 
@@ -23,7 +23,7 @@ folders:
 #       subtype — specific angle or topic
 #
 # pillars:
-#   SERVICES    — what Red Wolf does (installs, monitoring, consulting)
+#   SERVICES    — what ASIS New Zealand does (installs, monitoring, consulting)
 #   INDUSTRY    — market context (threats, regulation, technology)
 #   AUTHORITY   — credibility signals (awards, thought leadership, partnerships)
 #   PEOPLE      — human side (team, culture, careers)
@@ -36,7 +36,7 @@ steps:
   - id: step-1
     name: fetch-linkedin
     # Automated — GitHub Action runs every Monday, commits log entries to MAY/.
-    # py-redwolf on Mac mini required: residential IP + saved Playwright session.
+    # py-asis on Mac mini required: residential IP + saved Playwright session.
     trigger: cron Monday 9am NZST
     action: .github/workflows/fetch-linkedin.yml
     substeps:
@@ -48,7 +48,7 @@ steps:
           - CAN/TREE-2026Q3.json
         writes:
           - MAY/LOG-2026Q3.log
-        # Calls py-redwolf/listener.py (Mac mini) via Cloudflare Tunnel.
+        # Calls py-asis/listener.py (Mac mini) via Cloudflare Tunnel.
         # Playwright + saved LinkedIn session scrapes each connection page.
         # One JSON entry per slug per run, newest first, below the anchor in the single MAY/LOG-2026Q3.log.
         # Do not tag a connection whose recentPosts[] is empty or stale.
@@ -154,7 +154,7 @@ scoring:
 # - New subtypes can be added to any existing type
 # - New types require a new entry under the relevant category
 # - New categories require a new pillar entry and a justification
-#   for why it fits the Red Wolf brand strategy
+#   for why it fits the ASIS New Zealand brand strategy
 # - Connection slugs must be verified on LinkedIn before adding
 
 # ── KEY FILES ───────────────────────────────────────────────────────────────

@@ -1,13 +1,13 @@
 {
   "meta": {
     "type": "TREE",
-    "subject": "redwolf",
+    "subject": "asis",
     "quarter": "2026Q3",
     "created": "2026-10-13"
   },
   "connections": {
     "own": {
-      "Red Wolf High Level Security Ltd": { "url": "https://www.linkedin.com/company/red-wolf-high-level-security-ltd", "value": 0 }
+      "ASIS New Zealand": { "url": "https://www.linkedin.com/company/asis-new-zealand", "value": 0 }
     },
     "associations": {
       "New Zealand Security Association (NZSA)": { "url": "https://www.linkedin.com/company/new-zealand-security-association", "value": 2 },
@@ -89,7 +89,7 @@
         {
           "type": "Thought Leadership",
           "subtypes": [
-            { "name": "Expert Opinion", "description": "Red Wolf commentary on industry issues and incidents", "value": 0 },
+            { "name": "Expert Opinion", "description": "ASIS New Zealand commentary on industry issues and incidents", "value": 0 },
             { "name": "How-To / Education", "description": "Step-by-step security guides for business owners", "value": 0 },
             { "name": "Myth Busting", "description": "Common physical security misconceptions debunked", "value": 0 }
           ]
@@ -126,7 +126,7 @@
         {
           "type": "Culture & Values",
           "subtypes": [
-            { "name": "Company Culture", "description": "Team events, workplace values, what makes Red Wolf different", "value": 0 },
+            { "name": "Company Culture", "description": "Team events, workplace values, what makes ASIS New Zealand different", "value": 0 },
             { "name": "Community Involvement", "description": "Sponsorships, charity, local Wellington/Auckland initiatives", "value": 0 },
             { "name": "Diversity & Inclusion", "description": "Workforce representation and team stories", "value": 0 }
           ]
@@ -134,7 +134,7 @@
         {
           "type": "Careers",
           "subtypes": [
-            { "name": "Job Openings", "description": "Current roles available at Red Wolf", "value": 0 },
+            { "name": "Job Openings", "description": "Current roles available at ASIS New Zealand", "value": 0 },
             { "name": "Career Growth", "description": "Training programmes, progression stories", "value": 0 },
             { "name": "Apprenticeships & Grad Roles", "description": "Entry-level and emerging talent pipeline", "value": 0 }
           ]
@@ -195,7 +195,7 @@
         {
           "type": "Community & Reposts",
           "subtypes": [
-            { "name": "Industry News Commentary", "description": "Curated external news with Red Wolf perspective", "value": 0 },
+            { "name": "Industry News Commentary", "description": "Curated external news with ASIS New Zealand perspective", "value": 0 },
             { "name": "Partner Content", "description": "Cross-posts with suppliers and technology partners", "value": 0 },
             { "name": "Event Coverage", "description": "NZSA conferences, expos, Wellington/Auckland industry events", "value": 0 }
           ]

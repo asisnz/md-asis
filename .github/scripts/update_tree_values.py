@@ -46,7 +46,7 @@ RETIRED_BLOCKS = ('  "connectionsValue"', '  "connectionsUsed"')
 # (its full name, and any parenthetical in it, are always matched too).
 # Keep in sync with connections{} when one is added.
 ALIASES = {
-    "Red Wolf High Level Security Ltd": ["Red Wolf", "RedWolf"],
+    "ASIS New Zealand": ["ASIS New Zealand", "RedWolf"],
     "New Zealand Security Association (NZSA)": ["NZSA"],
     "NZ Police": ["New Zealand Police"],
     "Johnson Controls": ["Johnson"],

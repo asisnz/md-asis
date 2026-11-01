@@ -26,7 +26,7 @@ def gen_mermaid(path: str) -> str:
     lines = [
         "```mermaid",
         "graph LR",
-        f'  ROOT(["🔴 Red Wolf · {quarter}"])',
+        f'  ROOT(["🔴 ASIS New Zealand · {quarter}"])',
     ]
 
     classed = {"win": [], "lost": []}

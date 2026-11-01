@@ -1,7 +1,7 @@
 name: fetch-linkedin
 
 # Weekly cache refresh for STEP 1a (see README.md and
-# MIGHT/ASSET-2026Q3.md). Calls py-redwolf's listener (over Cloudflare
+# MIGHT/ASSET-2026Q3.md). Calls py-asis's listener (over Cloudflare
 # Tunnel + Access) once per connection and commits the results to the
 # single MAY/LOG-2026Q3.log. A connection that fails or times out is
 # skipped, not treated as a job failure — the fetch-linkedin skill
