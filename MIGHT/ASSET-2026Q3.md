@@ -2,6 +2,47 @@ ASSET LOG
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE -->
 
+## ASSET:asis 2026-11-02 -> Cloudflare Tunnel hostname changed to asis.toigroup.co.nz — PLANNED
+
+**Decision:** Use `asis.toigroup.co.nz` (not `redwolf.toigroup.co.nz`) as the tunnel hostname for py-asis. Historical entries in this log referencing `redwolf.toigroup.co.nz` reflect the original Red Wolf setup and are left intact per the append-only rule.
+
+**Changes required on Mac mini (not in repo — local to Mac mini):**
+
+1. Add the new DNS route:
+```bash
+cloudflared tunnel route dns py-asis asis.toigroup.co.nz
+```
+
+2. Update `~/.cloudflared/py-asis.yml` — replace `redwolf.toigroup.co.nz` with `asis.toigroup.co.nz` and add SSH ingress:
+```yaml
+ingress:
+  - hostname: ssh.toigroup.co.nz
+    service: ssh://localhost:22
+  - hostname: asis.toigroup.co.nz
+    service: http://localhost:8787
+  - service: http_status:404
+```
+
+3. Restart the cloudflared LaunchAgent:
+```bash
+launchctl unload ~/Library/LaunchAgents/com.asisnz.linkedin-tunnel.plist
+launchctl load ~/Library/LaunchAgents/com.asisnz.linkedin-tunnel.plist
+```
+
+**GitHub secrets to update in `asisnz/md-asis`:**
+- `LINKEDIN_FETCH_URL` → `https://asis.toigroup.co.nz/fetch`
+- `GENERATE_CONTENT_URL` → `https://asis.toigroup.co.nz`
+
+**SSH access from laptop (WSL) — `~/.ssh/config`:**
+```
+Host macmini
+  HostName ssh.toigroup.co.nz
+  User <mac-mini-username>
+  ProxyCommand cloudflared access ssh --hostname %h
+```
+
+**Status:** PLANNED — DNS route and yml not yet updated on Mac mini. GitHub secrets not yet updated.
+
 ## ASSET:asis 2026-11-02 -> Mac mini SSH access via Cloudflare Tunnel (Option B) — PLANNED
 
 **Decision:** SSH into the Mac mini from the Windows laptop (WSL) via the existing Cloudflare Tunnel infrastructure already set up for py-asis, rather than Tailscale or direct LAN SSH.
