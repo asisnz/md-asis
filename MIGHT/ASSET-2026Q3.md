@@ -2,6 +2,34 @@ ASSET LOG
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE -->
 
+## ASSET:asis 2026-11-02 -> md-asis repo created and fully mirrored from md-redwolf; GitHub setup complete
+
+**Context:** New client pipeline created for ASIS New Zealand (https://www.linkedin.com/company/asis-new-zealand) mirroring the md-redwolf / py-redwolf architecture. All Red Wolf branding, org references, and LinkedIn slugs replaced throughout.
+
+**Local repos created:**
+- `/Documents/GitHub/md-asis` — full copy of md-redwolf (py-redwolf subfolder excluded), all references updated: `redwolfnz` → `asisnz`, `md-redwolf` → `md-asis`, `py-redwolf` → `py-asis`, `Red Wolf High Level Security Ltd` → `ASIS New Zealand`, LinkedIn company slug → `asis-new-zealand`, slugs `REDWOLF` → `ASISNZ` in all scripts and skills.
+- `/Documents/GitHub/py-asis` — copy of py-redwolf; same substitutions applied. Git-inited separately as a private repo.
+
+**GitHub repos created under `asisnz` org:**
+- `asisnz/md-asis` (public) — pushed from local; remote fixed from stale `redwolfnz/md-redwolf` origin.
+- `asisnz/py-asis` (private) — created and pushed.
+
+**Logo:** `asis-nz-logo.svg` moved from Downloads → `md-asis/logo.svg`; `index.html` updated from `logo.jpg` to `logo.svg`.
+
+**GitHub Pages:** source set to `GitHub Actions`. `deploy-pages.yml` fixed: inject step now references `secrets.MD_ASIS` (was `secrets.MD_ASISNZ` from the clone).
+
+**Secrets:** Fine-grained PAT `md-asis-review` created: resource owner `asisnz`, repo `md-asis` only, Contents: Read and write. Added to `asisnz/md-asis` as `MD_ASIS` (matching `MD_REDWOLF` convention in md-redwolf).
+
+**Data reset:** `COULD/TABLE-2026Q3.csv` cleared to headers only — Red Wolf post data removed, ready for first ASIS NZ content batch.
+
+**Mirror check:** file structure, all 5 workflows, all 6 scripts, both Claude skills, TREE JSON, LOG, `.gitignore` — all confirmed matching md-redwolf (adjusted for ASIS NZ names). Zero stray `redwolfnz`/`Red Wolf`/`md-redwolf` references remaining in any code file.
+
+**Still open:**
+- `config.js` local PAT — replace `__REVIEW_PAT__` with the real `md-asis-review` token for local browser access.
+- GitHub Actions secrets not yet added: `LINKEDIN_FETCH_URL`, `LISTENER_SHARED_SECRET`, `GENERATE_CONTENT_URL` — mirrors md-redwolf, pointing to py-asis listener on the Mac mini.
+- py-asis Mac mini setup not yet done: Cloudflare tunnel (new `py-asis` tunnel + hostname), `login_linkedin.py`, `.env`, LaunchAgents for listener + cloudflared.
+- `CAN/TREE-2026Q3.json` connections — carried over from Red Wolf; update own/associations/partners for ASIS NZ as needed.
+
 ## ASSET:asis 2026-10-28 -> generate-content: first e2e run via listener; TODO adjust workflow to push to main
 
 **Done:** `GENERATE_CONTENT_URL` repo secret set to the tunnel base URL (`https://redwolf.toigroup.co.nz`, no path; `gen_posts.py` appends `/generate-content`). Direct POST of a real payload to the live listener returned 6 valid posts in 98s (`validate_posts()` passed, no repeated subtypes). First workflow_dispatch run on `main`: run 40615215955.
