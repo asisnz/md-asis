@@ -74,7 +74,7 @@ def fetch_one(base_url: str, slug: str, company_name: str, url: str,
     qs = urllib.parse.urlencode({"slug": slug, "companyName": company_name, "url": url})
     full_url = f"{base_url}?{qs}"
     headers = {
-        "User-Agent": "redwolf-linkedin-fetch/1.0 (+https://github.com/asisnz/md-asis)",
+        "User-Agent": "asis-linkedin-fetch/1.0 (+https://github.com/asisnz/md-asis)",
     }
     if cf_client_id and cf_client_secret:
         headers["CF-Access-Client-Id"] = cf_client_id
