@@ -2,6 +2,60 @@ ASSET LOG
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE -->
 
+## ASSET:asis 2026-11-02 -> Mac mini SSH access via Cloudflare Tunnel (Option B) — PLANNED
+
+**Decision:** SSH into the Mac mini from the Windows laptop (WSL) via the existing Cloudflare Tunnel infrastructure already set up for py-asis, rather than Tailscale or direct LAN SSH.
+
+**Why Option B (Cloudflare Tunnel SSH):**
+- Cloudflare Tunnel + cloudflared already installed and running on the Mac mini for the py-asis listener.
+- No additional software or account needed on either machine.
+- Works remotely over any network — no port forwarding, no VPN, no LAN required.
+- Access policy can be gated by the same Cloudflare Access rules as the listener.
+
+**Steps to implement (Mac mini side):**
+```bash
+# Add a DNS route for SSH on the existing py-asis tunnel
+cloudflared tunnel route dns py-asis ssh.<hostname>.com
+# e.g. ssh.toigroup.co.nz
+```
+Update `~/.cloudflared/py-asis.yml` to add an SSH ingress rule alongside the existing listener rule:
+```yaml
+ingress:
+  - hostname: ssh.<hostname>.com
+    service: ssh://localhost:22
+  - hostname: <existing-listener-hostname>
+    service: http://localhost:8787
+  - service: http_status:404
+```
+Reload cloudflared (or restart the LaunchAgent) to pick up the new ingress.
+
+Confirm Mac mini Remote Login is enabled: System Settings → General → Sharing → Remote Login ON.
+
+**Steps to implement (laptop / WSL side):**
+```bash
+# Install cloudflared in WSL if not already present
+# Then SSH via the tunnel:
+ssh -o ProxyCommand="cloudflared access ssh --hostname ssh.<hostname>.com" username@ssh.<hostname>.com
+```
+Or add to `~/.ssh/config` for convenience:
+```
+Host macmini
+  HostName ssh.<hostname>.com
+  User <mac-mini-username>
+  ProxyCommand cloudflared access ssh --hostname %h
+```
+Then just: `ssh macmini`
+
+**SSH key setup (one-time, after tunnel is live):**
+```bash
+# On WSL laptop — generate key if needed
+ssh-keygen -t ed25519 -C "laptop-wsl"
+# Copy to Mac mini through the tunnel
+ssh-copy-id -i ~/.ssh/id_ed25519.pub macmini
+```
+
+**Status:** PLANNED — tunnel ingress rule not yet added. Remote Login status on Mac mini unconfirmed.
+
 ## ASSET:asis 2026-11-02 -> md-asis repo created and fully mirrored from md-redwolf; GitHub setup complete
 
 **Context:** New client pipeline created for ASIS New Zealand (https://www.linkedin.com/company/asis-new-zealand) mirroring the md-redwolf / py-redwolf architecture. All Red Wolf branding, org references, and LinkedIn slugs replaced throughout.
