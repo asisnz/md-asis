@@ -10,7 +10,7 @@
       "ASIS New Zealand": { "url": "https://www.linkedin.com/company/asis-new-zealand", "value": 0 }
     },
     "associations": {
-      "New Zealand Security Association (NZSA)": { "url": "https://www.linkedin.com/company/new-zealand-security-association", "value": 2 },
+      "New Zealand Security Association (NZSA)": { "url": "https://www.linkedin.com/company/new-zealand-security-association", "value": 0 },
       "ASIS International": { "url": "https://www.linkedin.com/company/asis-international", "value": 0 },
       "NZ Police": { "url": "https://www.linkedin.com/company/nz-police", "value": 0 }
     },
@@ -30,7 +30,7 @@
         {
           "type": "Electronic Security",
           "subtypes": [
-            { "name": "CCTV", "description": "Surveillance installs, upgrades, camera technology showcases", "value": 1 },
+            { "name": "CCTV", "description": "Surveillance installs, upgrades, camera technology showcases", "value": 0 },
             { "name": "Access Control", "description": "Door/gate systems, credential management, biometrics", "value": 0 },
             { "name": "Alarms & Intercoms", "description": "Intruder detection setups, intercom deployments", "value": 0 }
           ]
@@ -70,7 +70,7 @@
           "subtypes": [
             { "name": "NZ Security Industry Standards", "description": "NZSA updates, PSR Act obligations", "value": 0 },
             { "name": "ISO & Certification News", "description": "ISO 9001 relevance, audit tips for businesses", "value": 0 },
-            { "name": "Government Policy", "description": "Protective Security Requirements (PSR) changes", "value": 1 }
+            { "name": "Government Policy", "description": "Protective Security Requirements (PSR) changes", "value": 0 }
           ]
         },
         {
@@ -106,7 +106,7 @@
           "type": "Awards & Milestones",
           "subtypes": [
             { "name": "Company Milestones", "description": "Anniversaries, growth achievements, history since 2005", "value": 0 },
-            { "name": "Team Certifications", "description": "Staff qualifications and new accreditations", "value": 1 },
+            { "name": "Team Certifications", "description": "Staff qualifications and new accreditations", "value": 0 },
             { "name": "Project Completions", "description": "Notable installs (anonymised where required)", "value": 0 }
           ]
         }
@@ -177,7 +177,7 @@
         {
           "type": "Interactive",
           "subtypes": [
-            { "name": "Polls", "description": "Security awareness questions for the audience", "value": 1 },
+            { "name": "Polls", "description": "Security awareness questions for the audience", "value": 0 },
             { "name": "Questions & Debates", "description": "Open-ended opinion posts to drive comments", "value": 0 },
             { "name": "Quiz / Did You Know", "description": "Security trivia, awareness statistics, surprising facts", "value": 0 }
           ]
