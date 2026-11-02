@@ -11,6 +11,25 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-02 13:10 → ASIS pipeline live end to end (LinkedIn session, GitHub secrets, py-asis pushed); SSH remote ready on Mac mini but no key authorized yet
+
+**LinkedIn session:** ran `login_linkedin.py` in `py-asis` (interactive, ASIS New Zealand account). Saved `linkedin_storage_state.json` (gitignored, chmod 600, `li_at` cookie present, 47 cookies). Test fetch through the public tunnel (`https://asis.toigroup.co.nz/fetch`, `X-Listener-Secret` header) returned HTTP 200: ASISNZ, 138 followers, bio, recent posts. One fetch only, per the one-per-week guidance.
+
+**py-asis repo:** port change 8787 → 8788 committed and pushed to `asisnz/py-asis` main (`5ef8632`), so the repo now matches the running listener.
+
+**GitHub secrets set in `asisnz/md-asis`** (pattern copied from `redwolfnz/md-redwolf`): `LINKEDIN_FETCH_URL` = `https://asis.toigroup.co.nz/fetch`, `GENERATE_CONTENT_URL` = `https://asis.toigroup.co.nz`, `LISTENER_SHARED_SECRET` (from `py-asis/.env`, piped straight to `gh secret set`, never printed). Existing `MD_ASIS` unchanged. `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` deliberately not set: md-redwolf runs without them (unset secrets expand to empty strings in Actions) and the shared secret is the auth layer. This corrects the earlier statement that generate-content would fail without them. `fetch-linkedin` workflow not yet triggered.
+
+**Naming / tunnel health:** no LaunchAgents renamed; `com.redwolf.*` keep their names. `com.redwolf.linkedin-tunnel` exit status 1 is a stale value, process healthy.
+
+**SSH remote status:** tunnel live (`ssh.toigroup.co.nz` on the `toigroup` tunnel, see 12:45 entry). Created empty `~/.ssh/authorized_keys` (chmod 600) on the Mac mini; pubkey auth enabled by default. No laptop key authorized yet, so login via the tunnel still returns "Permission denied". Password and keyboard-interactive login still ON. The Mac mini's own `id_ed25519.pub` (`jayreck-macmini`) was NOT authorized (it is its outbound key).
+
+**Still to do:**
+- Laptop (WSL): install `cloudflared`; add `macmini` entry to `~/.ssh/config` (HostName `ssh.toigroup.co.nz`, User `jayreck`, ProxyCommand `cloudflared access ssh --hostname %h`); `ssh-keygen -t ed25519 -C "laptop-wsl"`; authorize via `ssh-copy-id -i ~/.ssh/id_ed25519.pub macmini` or by giving the public key to append to `authorized_keys`; test `ssh macmini`.
+- After the key test works: disable SSH password login (needs admin; not before, to avoid lockout).
+- Optional: `cloudflared` upgrade 2026.3.0 → 2026.10.7 (restarts all four tunnels briefly); Cloudflare Access policy on `ssh.toigroup.co.nz` / `asis.toigroup.co.nz`.
+- Trigger `fetch-linkedin` workflow as the first real end-to-end run.
+
+
 ## ASSET:asis 2026-11-02 13:00 → ASIS split onto its own `py-asis` Cloudflare tunnel + listener on port 8788 (supersedes the "not done" listener-move line in the 12:45 entry below)
 
 **Done on the Mac mini:**
