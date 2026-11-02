@@ -11,6 +11,20 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-02 13:15 → Laptop (WSL) public key authorized on Mac mini; repos pulled; password login still ON
+
+**Pulled:** `md-redwolf` (fast-forward to `fc3ab67`) and `md-asis` (fast-forward to `db31240`, picking up the laptop's 14:00 WSL entry). No conflicts.
+
+**Authorized key:** appended the `laptop-wsl` ed25519 public key from the 14:00 WSL entry to `~/.ssh/authorized_keys` on the Mac mini, after the user confirmed it was theirs. File has exactly one key, chmod 600. Fingerprint `SHA256:1yg2oy/ZLQbCPM47gIDDa889TRvP1rKUwqOs+c72uoM`. Mac mini login user is `jayreck`.
+
+**Not yet verified:** key login from the laptop (private key lives only on the laptop). Needs `cloudflared` installed in WSL (`sudo dpkg -i /tmp/cloudflared.deb`, interactive), then `ssh macmini`.
+
+**Still to do:**
+- Confirm `ssh macmini` works key-only from WSL.
+- After that, disable SSH password and keyboard-interactive login on the Mac mini (admin required). Not before, to avoid lockout.
+- Optional: `cloudflared` upgrade 2026.3.0 → 2026.10.7 (restarts all four tunnels briefly); Cloudflare Access policy on `ssh.toigroup.co.nz` / `asis.toigroup.co.nz`; trigger the `fetch-linkedin` workflow for the first real end-to-end run.
+
+
 ## ASSET:asis 2026-11-02 14:00 → SSH laptop (WSL) side complete — public key ready to authorize on Mac mini
 
 **Done on laptop (WSL):**
