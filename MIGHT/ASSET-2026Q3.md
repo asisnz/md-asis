@@ -2,6 +2,164 @@ ASSET LOG
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE -->
 
+## ASSET:asis 2026-11-02 -> SSH via Cloudflare Tunnel — laptop (WSL) side complete
+
+**WSL side (done):**
+- `cloudflared-linux-amd64.deb` downloaded to `/tmp/cloudflared.deb` — pending `sudo dpkg -i` (needs interactive terminal: `! sudo dpkg -i /tmp/cloudflared.deb`)
+- SSH keypair generated: `~/.ssh/id_ed25519` (ed25519, comment `laptop-wsl`)
+- `~/.ssh/config` written:
+```
+Host macmini
+  HostName ssh.toigroup.co.nz
+  User jayreck
+  IdentityFile ~/.ssh/id_ed25519
+  ProxyCommand cloudflared access ssh --hostname %h
+```
+- Permissions set: `~/.ssh` 700, `config` + `id_ed25519` 600, `id_ed25519.pub` 644
+
+**Public key to add to Mac mini `~/.ssh/authorized_keys`:**
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmPBQjMToMVZaWWZuJ/nzdjYEpqVv1ubmi84CISd1K7 laptop-wsl
+```
+
+**Mac mini side (still pending):**
+1. Add public key above to `~/.ssh/authorized_keys` (create file if missing, chmod 600)
+2. System Settings → General → Sharing → Remote Login → ON
+3. `cloudflared tunnel route dns py-asis ssh.toigroup.co.nz`
+4. Update `~/.cloudflared/py-asis.yml` — add SSH ingress before listener rule (see cloudflared.config.yml.template in py-asis)
+5. Restart tunnel LaunchAgent:
+```bash
+launchctl unload ~/Library/LaunchAgents/com.asisnz.linkedin-tunnel.plist
+launchctl load  ~/Library/LaunchAgents/com.asisnz.linkedin-tunnel.plist
+```
+
+**To connect once all steps done:**
+```bash
+# In WSL — install cloudflared first:
+! sudo dpkg -i /tmp/cloudflared.deb
+# Then:
+ssh macmini
+```
+
+**Status:** WSL side complete. Mac mini side pending.
+
+## ASSET:asis 2026-11-02 -> Mac mini full setup guide — PLANNED
+
+All steps below are to be run on the Mac mini terminal unless otherwise noted.
+
+### 1. Prerequisites (Mac mini)
+```bash
+# Install Homebrew if not present
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install cloudflared and git
+brew install cloudflared git
+```
+
+### 2. Clone py-asis
+```bash
+cd ~/Documents/GitHub   # or wherever you keep repos
+git clone https://github.com/asisnz/py-asis.git
+cd py-asis
+```
+
+### 3. Python venv + Playwright
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium
+```
+
+### 4. Create .env (never committed)
+```bash
+# Inside py-asis directory:
+cat > .env <<EOF
+LISTENER_SHARED_SECRET=<generate-a-random-string-here>
+EOF
+# e.g. openssl rand -hex 32
+```
+Copy the same secret value into GitHub Actions secret `LISTENER_SHARED_SECRET` on `asisnz/md-asis`.
+
+### 5. Cloudflare Tunnel — create and route
+```bash
+cloudflared tunnel login
+cloudflared tunnel create py-asis
+
+# Two hostnames — one for the listener, one for SSH
+cloudflared tunnel route dns py-asis asis.toigroup.co.nz
+cloudflared tunnel route dns py-asis ssh.toigroup.co.nz
+```
+Note the tunnel UUID printed by `tunnel create`; you need it in step 6.
+
+### 6. cloudflared.config.yml (never committed)
+```bash
+# In ~/Documents/GitHub/py-asis:
+cp cloudflared.config.yml.template cloudflared.config.yml
+# Edit the file — replace:
+#   <TUNNEL_ID>     → UUID from step 5
+#   <YOUR_USERNAME> → your Mac mini login name (echo $USER)
+nano cloudflared.config.yml
+```
+The template already has the two ingress rules (`ssh.toigroup.co.nz` and `asis.toigroup.co.nz`).
+
+### 7. LaunchAgents — copy, fill username, load
+```bash
+USERNAME=$(whoami)
+
+# Cloudflared tunnel daemon
+sed "s/<YOUR_USERNAME>/$USERNAME/g"   ~/Documents/GitHub/py-asis/com.asisnz.md-asis.plist.template   > ~/Library/LaunchAgents/com.asisnz.md-asis.plist
+
+# Listener (Python HTTP server)
+sed "s/<YOUR_USERNAME>/$USERNAME/g"   ~/Documents/GitHub/py-asis/com.asisnz.linkedin-listener.plist.template   > ~/Library/LaunchAgents/com.asisnz.linkedin-listener.plist
+
+# Load both
+launchctl load ~/Library/LaunchAgents/com.asisnz.md-asis.plist
+launchctl load ~/Library/LaunchAgents/com.asisnz.linkedin-listener.plist
+```
+
+### 8. Enable Remote Login (SSH)
+System Settings → General → Sharing → Remote Login → **ON**
+
+### 9. Save LinkedIn session
+```bash
+cd ~/Documents/GitHub/py-asis
+source .venv/bin/activate
+python3 login_linkedin.py
+# A browser window opens — log in to LinkedIn manually. The session cookie is saved locally.
+```
+
+### 10. Verify listener is running
+```bash
+curl -s -H "X-Listener-Secret: <your-secret>" http://127.0.0.1:8787/fetch?slug=test&url=https://x
+# Expect a JSON error (not a connection refused) confirming listener is up
+```
+
+### 11. Laptop / WSL — SSH setup (do this on the laptop)
+```bash
+# Install cloudflared in WSL
+wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
+
+# Add to ~/.ssh/config:
+cat >> ~/.ssh/config <<EOF
+
+Host macmini
+  HostName ssh.toigroup.co.nz
+  User <mac-mini-username>
+  ProxyCommand cloudflared access ssh --hostname %h
+EOF
+
+ssh macmini   # first time: cloudflared opens a browser for Cloudflare Access auth
+```
+
+### 12. GitHub Actions secrets to add on asisnz/md-asis
+- `LINKEDIN_FETCH_URL` → `https://asis.toigroup.co.nz/fetch`
+- `GENERATE_CONTENT_URL` → `https://asis.toigroup.co.nz`
+- `LISTENER_SHARED_SECRET` → same value as .env above
+
+**Status:** PLANNED — not yet started on Mac mini.
+
 ## ASSET:asis 2026-11-02 -> Cloudflare Tunnel hostname changed to asis.toigroup.co.nz — PLANNED
 
 **Decision:** Use `asis.toigroup.co.nz` (not `redwolf.toigroup.co.nz`) as the tunnel hostname for py-asis. Historical entries in this log referencing `redwolf.toigroup.co.nz` reflect the original Red Wolf setup and are left intact per the append-only rule.
