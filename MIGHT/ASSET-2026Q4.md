@@ -11,6 +11,34 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-02 14:00 → SSH laptop (WSL) side complete — public key ready to authorize on Mac mini
+
+**Done on laptop (WSL):**
+- SSH keypair generated: `~/.ssh/id_ed25519` (ed25519, comment `laptop-wsl`), permissions 600/644.
+- `~/.ssh/config` written (permissions 600):
+```
+Host macmini
+  HostName ssh.toigroup.co.nz
+  User jayreck
+  IdentityFile ~/.ssh/id_ed25519
+  ProxyCommand cloudflared access ssh --hostname %h
+```
+- `cloudflared-linux-amd64.deb` downloaded to `/tmp/cloudflared.deb` — needs `! sudo dpkg -i /tmp/cloudflared.deb` (interactive terminal required).
+
+**Public key to add to Mac mini `~/.ssh/authorized_keys`:**
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmPBQjMToMVZaWWZuJ/nzdjYEpqVv1ubmi84CISd1K7 laptop-wsl
+```
+On the Mac mini: `echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmPBQjMToMVZaWWZuJ/nzdjYEpqVv1ubmi84CISd1K7 laptop-wsl" >> ~/.ssh/authorized_keys`
+
+**To connect once cloudflared is installed in WSL:**
+```bash
+! sudo dpkg -i /tmp/cloudflared.deb
+ssh macmini
+```
+
+**Note:** SSH is on the `toigroup` tunnel (`ssh.toigroup.co.nz`), not `py-asis` — as recorded in the 12:45 Q4 entry. The Q3 ASSET log's py-asis SSH ingress plan is superseded by this.
+
 ## ASSET:asis 2026-11-02 13:10 → ASIS pipeline live end to end (LinkedIn session, GitHub secrets, py-asis pushed); SSH remote ready on Mac mini but no key authorized yet
 
 **LinkedIn session:** ran `login_linkedin.py` in `py-asis` (interactive, ASIS New Zealand account). Saved `linkedin_storage_state.json` (gitignored, chmod 600, `li_at` cookie present, 47 cookies). Test fetch through the public tunnel (`https://asis.toigroup.co.nz/fetch`, `X-Listener-Secret` header) returned HTTP 200: ASISNZ, 138 followers, bio, recent posts. One fetch only, per the one-per-week guidance.
