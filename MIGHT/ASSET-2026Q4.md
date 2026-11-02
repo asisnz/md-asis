@@ -11,6 +11,15 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-02 13:25 → Decision: keep SSH password login ON; drop "disable password login" from the to-do list (supersedes that line in the 13:15 entry)
+
+**Decision (user, 2026-11-02):** SSH password and keyboard-interactive login on the Mac mini stay enabled alongside key login. No `sshd` change will be made.
+
+**Trade-off noted:** `ssh.toigroup.co.nz` is internet-reachable through the `toigroup` tunnel, so the Mac password is the only thing guarding against guessing attempts from outside; key-only login would remove that exposure. A Cloudflare Access policy on the hostname is the optional middle ground if this is revisited.
+
+**Remaining SSH to-do:** install `cloudflared` in WSL (`sudo dpkg -i /tmp/cloudflared.deb`) and confirm `ssh macmini` works from the laptop. Other optional items unchanged: `cloudflared` upgrade, Cloudflare Access policy, first `fetch-linkedin` run.
+
+
 ## ASSET:asis 2026-11-02 13:15 → Laptop (WSL) public key authorized on Mac mini; repos pulled; password login still ON
 
 **Pulled:** `md-redwolf` (fast-forward to `fc3ab67`) and `md-asis` (fast-forward to `db31240`, picking up the laptop's 14:00 WSL entry). No conflicts.
