@@ -106,11 +106,11 @@ steps:
         # Claude returns a JSON array — gen_posts.py parses and appends to TABLE CSV.
 
       - id: 2c
-        name: open-pr
-        # Workflow commits TABLE CSV on a branch and opens a PR.
+        name: open-issue
+        # Workflow commits TABLE CSV directly to main and opens a GitHub Issue.
+        # Issues (unlike PRs) can be permanently deleted by a repo admin.
         commit: "content(w<NN>): generate week <NN> batch — post-<XXX> to post-<XXX>"
-        branch: content/w<NN>-batch
-        pr_body_script: .github/scripts/gen_pr_body.py
+        issue_body_script: .github/scripts/gen_pr_body.py
 
 # ── RULES ───────────────────────────────────────────────────────────────────
 rules:

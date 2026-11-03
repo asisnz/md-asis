@@ -3,10 +3,10 @@ name: Generate weekly content
 # Step 2 of the pipeline (PIPE-2026Q3.yml).
 # Calls the Mac mini listener (via Cloudflare Tunnel) which runs gen_posts.py
 # and returns 6 generated posts as JSON. This Action appends them to the CSV,
-# commits on the single standing branch content/weekly-batch (reset to main
-# each run, never a new branch), opens a PR, and squash-merges it right away.
+# commits directly to main, and opens a GitHub Issue with the batch summary
+# (issues can be permanently deleted; PRs cannot).
 #
-# Step 2D (generate-media) runs after the PR merges. It calls the Mac mini
+# Step 2D (generate-media) runs after the commit. It calls the Mac mini
 # /generate-media endpoint (same tunnel as generate-content). The Mac mini
 # runs generate_media.py which calls claude -p to produce SVG per post,
 # renders to PNG/PDF/GIF, and returns files as base64. gen_media.py writes
@@ -34,7 +34,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  issues: write
 
 jobs:
   generate:
@@ -63,11 +63,10 @@ jobs:
             echo "num=$(python3 -c 'from datetime import date; print(date.today().isocalendar()[1])')" >> $GITHUB_OUTPUT
           fi
 
-      - name: Reset standing content branch to main
+      - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -B content/weekly-batch origin/main
 
       - name: Refresh subtype values from feedback
         run: python3 .github/scripts/update_tree_values.py
@@ -97,31 +96,22 @@ jobs:
           ")
           git add COULD/TABLE-2026Q3.csv CAN/TREE-2026Q3.json
           git commit -m "content(w${WEEK}): generate week ${WEEK} batch — ${RANGE}"
-          # The branch is reused every week and reset to main above, so its
-          # remote copy is always stale or already merged: overwrite it.
-          git fetch origin content/weekly-batch 2>/dev/null || true
-          git push --force-with-lease origin content/weekly-batch
+          # Push directly to main; rebase-retry handles concurrent bot commits.
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin main && break
+            sleep 5
+          done
 
-      - name: Generate PR body
-        run: python3 .github/scripts/gen_pr_body.py ${{ steps.week.outputs.num }} > /tmp/pr_body.md
+      - name: Generate issue body
+        run: python3 .github/scripts/gen_pr_body.py ${{ steps.week.outputs.num }} > /tmp/issue_body.md
 
-      - name: Open PR and merge it
+      - name: Open issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           WEEK=${{ steps.week.outputs.num }}
           TITLE="content(w${WEEK}): week ${WEEK} batch"
-          PR=$(gh pr list --head content/weekly-batch --state open --json number -q '.[0].number')
-          if [ -n "$PR" ]; then
-            gh pr edit "$PR" --title "$TITLE" --body-file /tmp/pr_body.md
-          else
-            gh pr create --title "$TITLE" --body-file /tmp/pr_body.md \
-              --base main --head content/weekly-batch
-            PR=$(gh pr list --head content/weekly-batch --state open --json number -q '.[0].number')
-          fi
-          # Squash-merge immediately; the branch is kept (repo setting
-          # delete_branch_on_merge is off) for the next run to reset.
-          gh pr merge "$PR" --squash --subject "$TITLE"
+          gh issue create --title "$TITLE" --body-file /tmp/issue_body.md
 
   # generate-media: ON HOLD — run manually via generate-media.yml workflow
   # Uncomment to re-enable automatic media generation after content generation.
