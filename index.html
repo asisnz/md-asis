@@ -175,27 +175,67 @@ const TOKEN  = "__REVIEW_PAT__".startsWith("__") ? (window.__MD_ASIS__ || "") : 
 const CSV_PATH = `COULD/TABLE-2026Q3.csv`;
 const CSV_URL  = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${CSV_PATH}`;
 
-// Header names, with stray \r stripped exactly as parseCSV strips them. Without
-// this a header like "sources\r\r" keeps its CRs here but not in the row keys,
-// so serializeCSV looks up a key that does not exist and blanks the column.
+// RFC 4180 compliant CSV parser — handles quoted fields with embedded
+// newlines, commas, and escaped double-quotes (""). Replaces the old
+// line-split parser that broke when description fields contained \n.
+function _csvReadField(text, i) {
+  const len = text.length;
+  if (text[i] === '"') {
+    i++;
+    let s = "";
+    while (i < len) {
+      if (text[i] === '"') {
+        i++;
+        if (i < len && text[i] === '"') { s += '"'; i++; }
+        else break;
+      } else {
+        s += text[i++];
+      }
+    }
+    return [s, i];
+  }
+  let s = "";
+  while (i < len && text[i] !== ',' && text[i] !== '\r' && text[i] !== '\n') s += text[i++];
+  return [s, i];
+}
+
+function _csvReadRow(text, i) {
+  const len = text.length;
+  const fields = [];
+  while (i < len && text[i] !== '\r' && text[i] !== '\n') {
+    const [val, ni] = _csvReadField(text, i);
+    fields.push(val);
+    i = ni;
+    if (i < len && text[i] === ',') i++;
+    else break;
+  }
+  if (i < len && text[i] === '\r') i++;
+  if (i < len && text[i] === '\n') i++;
+  return [fields, i];
+}
+
 function parseHeaders(text) {
-  return text.trim().split("\n")[0].replace(/\r/g, "").replace(/"/g, "").split(",");
+  const [fields] = _csvReadRow(text.trimStart(), 0);
+  return fields;
 }
 
 function parseCSV(text) {
-  const lines = text.trim().replace(/\r/g, "").split("\n");
-  const headers = lines[0].replace(/"/g, "").split(",");
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur = "", inQ = false;
-    for (const ch of line) {
-      if (ch === '"') { inQ = !inQ; }
-      else if (ch === ',' && !inQ) { vals.push(cur); cur = ""; }
-      else { cur += ch; }
+  const len = text.trimStart().length;
+  const src = text.trimStart();
+  let i = 0;
+  const [headers, afterHeader] = _csvReadRow(src, i);
+  i = afterHeader;
+  const rows = [];
+  while (i < len) {
+    if (src[i] === '\r') { i++; continue; }
+    if (src[i] === '\n') { i++; continue; }
+    const [fields, ni] = _csvReadRow(src, i);
+    i = ni;
+    if (fields.some(f => f !== "")) {
+      rows.push(Object.fromEntries(headers.map((h, j) => [h, (fields[j] || "").trim()])));
     }
-    vals.push(cur);
-    return Object.fromEntries(headers.map((h, i) => [h, (vals[i] || "").trim()]));
-  });
+  }
+  return rows;
 }
 
 function mediaLink(row) {
@@ -299,6 +339,7 @@ async function fetchCSV() {
       cache: "no-store"
     });
     const json = await res.json();
+    if (!json.content) throw new Error(`GitHub API error (${res.status}): ${json.message || 'no content returned'}`);
     csvSha = json.sha;
     const bytes = Uint8Array.from(atob(json.content.replace(/\n/g, "")), c => c.charCodeAt(0));
     return new TextDecoder("utf-8").decode(bytes);

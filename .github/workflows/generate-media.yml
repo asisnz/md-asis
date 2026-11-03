@@ -1,0 +1,65 @@
+name: Generate weekly media
+
+# Standalone media-only run — triggers the Mac mini /generate-media endpoint
+# for posts in the target week that have an empty media URL.
+# Use when: (a) testing the media pipeline, (b) the generate-content run
+# succeeded but the generate-media job failed, (c) media regeneration needed.
+#
+# Requires repo secrets:
+#   GENERATE_CONTENT_URL    — Cloudflare Tunnel URL (same as generate-content)
+#   CF_ACCESS_CLIENT_ID     — Cloudflare Access service token ID
+#   CF_ACCESS_CLIENT_SECRET — Cloudflare Access service token secret
+#   LISTENER_SHARED_SECRET  — shared secret verified by listener.py
+
+on:
+  workflow_dispatch:
+    inputs:
+      week:
+        description: 'ISO week number (leave blank for current week)'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  generate-media:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Compute week number
+        id: week
+        run: |
+          if [ -n "${{ github.event.inputs.week }}" ]; then
+            echo "num=${{ github.event.inputs.week }}" >> $GITHUB_OUTPUT
+          else
+            echo "num=$(python3 -c 'from datetime import date; print(date.today().isocalendar()[1])')" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate media via Mac mini
+        env:
+          GENERATE_CONTENT_URL: ${{ secrets.GENERATE_CONTENT_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          LISTENER_SHARED_SECRET: ${{ secrets.LISTENER_SHARED_SECRET }}
+          CONTENT_WEEK: ${{ steps.week.outputs.num }}
+        run: python3 .github/scripts/gen_media.py
+
+      - name: Commit generated media
+        run: |
+          WEEK=${{ steps.week.outputs.num }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add MAY/media/2026Q3/ COULD/TABLE-2026Q3.csv
+          git diff --cached --quiet && echo "nothing to commit" && exit 0
+          git commit -m "media(w${WEEK}): generate week ${WEEK} assets"
+          git pull --rebase
+          git push

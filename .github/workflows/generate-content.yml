@@ -6,11 +6,18 @@ name: Generate weekly content
 # commits on the single standing branch content/weekly-batch (reset to main
 # each run, never a new branch), opens a PR, and squash-merges it right away.
 #
+# Step 2D (generate-media) runs after the PR merges. It calls the Mac mini
+# /generate-media endpoint (same tunnel as generate-content). The Mac mini
+# runs generate_media.py which calls claude -p to produce SVG per post,
+# renders to PNG/PDF/GIF, and returns files as base64. gen_media.py writes
+# them to MAY/media/2026Q3/ and updates the CSV media URL column.
+#
 # Requires repo secrets:
 #   GENERATE_CONTENT_URL    — Cloudflare Tunnel URL for the /generate-content endpoint
 #   CF_ACCESS_CLIENT_ID     — Cloudflare Access service token ID
 #   CF_ACCESS_CLIENT_SECRET — Cloudflare Access service token secret
 #   LISTENER_SHARED_SECRET  — shared secret verified by listener.py
+#   (Step 2D uses the Mac mini's Claude login — no additional secrets needed)
 
 on:
   schedule:
@@ -32,6 +39,8 @@ permissions:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    outputs:
+      week: ${{ steps.week.outputs.num }}
 
     steps:
       - uses: actions/checkout@v4
@@ -113,3 +122,34 @@ jobs:
           # Squash-merge immediately; the branch is kept (repo setting
           # delete_branch_on_merge is off) for the next run to reset.
           gh pr merge "$PR" --squash --subject "$TITLE"
+
+  # generate-media: ON HOLD — run manually via generate-media.yml workflow
+  # Uncomment to re-enable automatic media generation after content generation.
+  # generate-media:
+  #   needs: generate
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.12'
+  #     - name: Install dependencies
+  #       run: pip install requests
+  #     - name: Generate media via Mac mini
+  #       env:
+  #         GENERATE_CONTENT_URL: ${{ secrets.GENERATE_CONTENT_URL }}
+  #         CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+  #         CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+  #         LISTENER_SHARED_SECRET: ${{ secrets.LISTENER_SHARED_SECRET }}
+  #         CONTENT_WEEK: ${{ needs.generate.outputs.week }}
+  #       run: python3 .github/scripts/gen_media.py
+  #     - name: Commit generated media
+  #       run: |
+  #         WEEK=${{ needs.generate.outputs.week }}
+  #         git config user.name "github-actions[bot]"
+  #         git config user.email "github-actions[bot]@users.noreply.github.com"
+  #         git add MAY/media/2026Q3/ COULD/TABLE-2026Q3.csv
+  #         git diff --cached --quiet && echo "nothing to commit" && exit 0
+  #         git commit -m "media(w${WEEK}): generate week ${WEEK} assets"
+  #         git pull --rebase
+  #         git push
