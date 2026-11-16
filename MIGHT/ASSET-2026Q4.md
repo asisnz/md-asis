@@ -11,6 +11,14 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-17 10:00 → fix: browse_linkedin.py switched to headed Chrome to bypass Cloudflare bot challenge
+
+**Problem diagnosed (2026-11-17):** Both the weekly `fetch-linkedin` run (2026-11-15) and a direct test through the listener returned `followerCount: 0`, `bio: ""`, `recentPosts: []` for all 10 connections. Direct page dump via Playwright confirmed the cause: LinkedIn's CDN-level Cloudflare protection was intercepting `headless=True` Chrome and serving a "Performing security verification" block page instead of the LinkedIn company page. The `li_at` session cookie is still valid (expires 2027-11-01) — no re-login required.
+
+**Fix applied:** Changed `headless=True` → `headless=False` in `py-asis/browse_linkedin.py` (commit `6cbb20e`). The Mac mini has an active WindowServer/loginwindow GUI session, so a headed Chrome window opens on the display, passes Cloudflare's bot check, and closes automatically — no human interaction needed. Confirmed via the py-redwolf listener live test: NZSA returned `followerCount: 3765`, full bio, and 2 recent posts.
+
+**Deployed:** `py-asis` pulled to Mac mini (fast-forward to `6cbb20e`, also picking up generate_media.py and listener updates). `com.asisnz.linkedin-listener` LaunchAgent restarted. `fetch-linkedin` workflow re-triggered manually to refresh the week 47 cache before Tuesday's content generation run.
+
 ## ASSET:asis 2026-11-02 13:25 → Decision: keep SSH password login ON; drop "disable password login" from the to-do list (supersedes that line in the 13:15 entry)
 
 **Decision (user, 2026-11-02):** SSH password and keyboard-interactive login on the Mac mini stay enabled alongside key login. No `sshd` change will be made.
