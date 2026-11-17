@@ -70,7 +70,7 @@ Build layers in this exact order:
 - Body text 15px `#636363` below title, wrapped manually with `<tspan>` if over ~70 chars
 - Cards stack from y=380 with 16px gap between them
 
-**7. Callout bar** — below cards. A 4px coral vertical rect on the left (`#F5624E`, x=60, height=54, rx=2), then a bold 18px line with the post CTA. Key phrase in coral `#F5624E`, rest charcoal.
+**7. Callout bar** — below cards. A 4px coral vertical rect on the left (`#F5624E`, x=60, height=54, rx=2), then a bold 18px line with the post CTA. Key phrase in primary dark `#013EAD`, rest charcoal.
 
 **8. Final CTA card** — `#1A1A1A` rect x=60, width=960, height=80, rx=10. White 17px text centred vertically. One CTA sentence from the post description.
 
