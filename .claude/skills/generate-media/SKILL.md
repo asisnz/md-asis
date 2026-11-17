@@ -28,11 +28,14 @@ Reply with **pure SVG XML only** — no explanation, no markdown, no code fences
 | Token | Value |
 |---|---|
 | Primary (coral) | `#F5624E` |
+| Primary dark (ASIS blue) | `#013EAD` |
 | Charcoal | `#1A1A1A` |
 | Background | `#F5F5F5` |
 | White | `#FFFFFF` |
 | Card border | `#E0E0E0` |
 | Body text | `#636363` |
+
+**Primary dark `#013EAD`** — the darker primary ASIS tone. Pair it with coral: use it for coral-accent text under 24px (kickers, small labels, key phrases in the callout bar) where coral is too light to read, and as an optional fill for dark panels in place of charcoal. White text on it reads well. Large headline highlights, stripes, badge and circle icons stay coral.
 
 Font: `font-family="Inter, -apple-system, Arial, sans-serif"`
 
