@@ -27,15 +27,15 @@ Reply with **pure SVG XML only** — no explanation, no markdown, no code fences
 
 | Token | Value |
 |---|---|
-| Primary (coral) | `#F5624E` |
-| Primary dark (ASIS blue) | `#013EAD` |
+| Primary (ASIS blue) | `#013EAD` |
+| Primary tint | `#E6ECF7` |
 | Charcoal | `#1A1A1A` |
 | Background | `#F5F5F5` |
 | White | `#FFFFFF` |
 | Card border | `#E0E0E0` |
 | Body text | `#636363` |
 
-**Primary dark `#013EAD`** — the darker primary ASIS tone. Pair it with coral: use it for coral-accent text under 24px (kickers, small labels, key phrases in the callout bar) where coral is too light to read, and as an optional fill for dark panels in place of charcoal. White text on it reads well. Large headline highlights, stripes, badge and circle icons stay coral.
+**Primary `#013EAD`** is the only accent colour. Do not use coral or red (`#F5624E`, `#cd3b3f`) anywhere except inside the official logo file. Use the primary tint `#E6ECF7` for light accent backgrounds.
 
 Font: `font-family="Inter, -apple-system, Arial, sans-serif"`
 
@@ -50,10 +50,10 @@ Build layers in this exact order:
 
 **2. Top stripe**
 ```xml
-<rect width="1080" height="8" fill="#F5624E"/>
+<rect width="1080" height="8" fill="#013EAD"/>
 ```
 
-**3. Badge pill** — top-left at x=60, y=44. Coral `#F5624E` rounded rect (height=32, rx=4, padding 12px sides). White uppercase label derived from the post `type` (e.g. "Services" → "SERVICES"). Font: 13px, weight 700, letter-spacing 0.08em.
+**3. Badge pill** — top-left at x=60, y=44. Primary blue `#013EAD` rounded rect (height=32, rx=4, padding 12px sides). White uppercase label derived from the post `type` (e.g. "Services" → "SERVICES"). Font: 13px, weight 700, letter-spacing 0.08em.
 
 **4. Logo** — top-right:
 ```xml
@@ -61,16 +61,16 @@ Build layers in this exact order:
 ```
 (The caller substitutes `LOGO_PLACEHOLDER` — leave it exactly as-is.)
 
-**5. Headline** — the post `title` split across 2–3 `<tspan>` lines. Start x=60, y=210. Size 68px, weight 900. Most words charcoal `#1A1A1A`; the 2–4 most impactful words in coral `#F5624E`. Use one `<text>` element with `<tspan dy="1.15em">` children. Never use `foreignObject`.
+**5. Headline** — the post `title` split across 2–3 `<tspan>` lines. Start x=60, y=210. Size 68px, weight 900. Most words charcoal `#1A1A1A`; the 2–4 most impactful words in primary blue `#013EAD`. Use one `<text>` element with `<tspan dy="1.15em">` children. Never use `foreignObject`.
 
 **6. Content cards** — 3–5 cards extracted from the key points in `description`. Each card:
 - White `#FFFFFF` rect, x=60, width=960, height 90–110px, rx=10, stroke `#E0E0E0`, stroke-width=1
-- Coral filled circle icon left (cx=108, r=20, fill `#F5624E`) with a bold white letter inside (A, B, C…)
+- Primary blue filled circle icon left (cx=108, r=20, fill `#013EAD`) with a bold white letter inside (A, B, C…)
 - Bold card title 18px charcoal left of icon at x=142
 - Body text 15px `#636363` below title, wrapped manually with `<tspan>` if over ~70 chars
 - Cards stack from y=380 with 16px gap between them
 
-**7. Callout bar** — below cards. A 4px coral vertical rect on the left (`#F5624E`, x=60, height=54, rx=2), then a bold 18px line with the post CTA. Key phrase in primary dark `#013EAD`, rest charcoal.
+**7. Callout bar** — below cards. A 4px primary blue vertical rect on the left (`#013EAD`, x=60, height=54, rx=2), then a bold 18px line with the post CTA. Key phrase in primary `#013EAD`, rest charcoal.
 
 **8. Final CTA card** — `#1A1A1A` rect x=60, width=960, height=80, rx=10. White 17px text centred vertically. One CTA sentence from the post description.
 
@@ -81,7 +81,7 @@ Build layers in this exact order:
 
 **10. Bottom stripe**
 ```xml
-<rect y="1342" width="1080" height="8" fill="#F5624E"/>
+<rect y="1342" width="1080" height="8" fill="#013EAD"/>
 ```
 
 ## PDF slides
