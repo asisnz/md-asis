@@ -11,6 +11,38 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-22 → submodule refactor: shared data extracted into 4 private jayreck996 repos; all workflows hardened for concurrent runs
+
+**Submodule repos created under `jayreck996/`:**
+- `jayreck996/JSON` — content strategy tree (`REDWOLF/JSON-2026Q4.json`, `ASIS/JSON-2026Q4.json`)
+- `jayreck996/CSV` — post table (`REDWOLF/CSV-2026Q4.csv`, `ASIS/CSV-2026Q4.csv`)
+- `jayreck996/YML` — pipeline definition (`REDWOLF/YML-2026Q4.yml`, `ASIS/YML-2026Q4.yml`)
+- `jayreck996/JSONL` — per-slug LinkedIn cache append log (10 `{SLUG}.jsonl` files per org); replaces `MAY/LOG-*.log`
+
+**Files retired from both org repos:** `CAN/TREE-*.json`, `COULD/TABLE-*.csv`, `PIPE-*.yml`, `MAY/LOG-*.log`, `MIGHT/` directory. `ASSET-*.md` and `ISSUE-*.md` moved to repo root.
+
+**Scripts updated to Q4 submodule paths:** `gen_posts.py`, `fetch_linkedin_cache.py`, `update_tree_values.py`, `gen_tree_mermaid.py`, `gen_media.py`, `gen_pr_body.py`. `fetch_linkedin_cache.py` rewrote `prepend_entry()` as `append_entry()` writing per-slug JSONL.
+
+**PAT secrets restructured (4 separate fine-grained tokens):**
+- `JSON_PAT` → `jayreck996/JSON` (write)
+- `CSV_PAT` → `jayreck996/CSV` (write)
+- `YML_PAT` → `jayreck996/YML` (write)
+- `JSONL_PAT` → `jayreck996/JSONL` (write)
+Set on both `redwolfnz/md-redwolf` and `asisnz/md-asis`.
+
+**All 10 workflow files hardened (5 per org):** `fetch-linkedin`, `generate-content`, `generate-media`, `update-feedback`, `update-tree-mermaid`.
+- Checkout token changed from `JSON_PAT` → `GITHUB_TOKEN` (fixes 403 on parent repo push — `JSON_PAT` is now scoped to `jayreck996` only).
+- `submodules: recursive` removed; replaced with explicit "Initialise submodules" step using per-repo `insteadOf` credential config.
+- `git submodule update --init -- CSV JSON YML JSONL` (skips `py-redwolf`/`py-asis` which have no runner credentials).
+- `git -C {sub} checkout -B main origin/main` for each submodule in init step — ensures scripts see latest main before modifying files; prevents "local changes would be overwritten" error when a concurrent org run has already advanced `origin/main`.
+- 5-attempt rebase-retry added to every submodule push (JSON, CSV, JSONL) so concurrent runs from both orgs queue naturally.
+
+**Bug fixed — `update_tree_values.py` double-nested connections:** The script's `CONN_RE` regex only handles single-line connection entries. The Q4 JSON used multi-line format, causing inner `"url"` and `"value"` keys to be treated as connection names and rewritten as `{"url": {"url": "...", "value": 0}, "value": {"url": 0, "value": 0}}`. Repaired both `REDWOLF/JSON-2026Q4.json` and `ASIS/JSON-2026Q4.json` by flattening back to `{ "url": "...", "value": N }` single-line format. Script idempotent going forward (always writes single-line).
+
+**Mac mini pulled via SSH** (`ssh macmini`): `git pull && git submodule update --init py-redwolf` on `md-redwolf`; `git pull && git submodule update --init py-asis` on `md-asis`. `py-asis` initialized for the first time (newly registered submodule). Mac mini does not need data submodules — all data is passed to the listener via HTTP payload by the GitHub Actions runner.
+
+**e2e test:** `fetch-linkedin` (skip_fetch=true) triggered simultaneously on both `redwolfnz/md-redwolf` and `asisnz/md-asis`. Both `refresh-values` jobs passed concurrently — JSON submodule queued correctly via rebase-retry.
+
 ## ASSET:asis 2026-11-17 10:00 → fix: browse_linkedin.py switched to headed Chrome to bypass Cloudflare bot challenge
 
 **Problem diagnosed (2026-11-17):** Both the weekly `fetch-linkedin` run (2026-11-15) and a direct test through the listener returned `followerCount: 0`, `bio: ""`, `recentPosts: []` for all 10 connections. Direct page dump via Playwright confirmed the cause: LinkedIn's CDN-level Cloudflare protection was intercepting `headless=True` Chrome and serving a "Performing security verification" block page instead of the LinkedIn company page. The `li_at` session cookie is still valid (expires 2027-11-01) — no re-login required.
