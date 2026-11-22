@@ -24,7 +24,7 @@ from pathlib import Path
 QUARTER = "2026Q3"
 TABLE   = "CSV/ASIS/CSV-2026Q4.csv"
 ASSET   = "ASSET-2026Q4.md"
-PIPE    = f"PIPE-{QUARTER}.yml"
+PIPE    = "YML/ASIS/YML-2026Q4.yml"
 
 FETCH_ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
 
@@ -272,7 +272,7 @@ def asset_para() -> str:
 
 def gen_pr_body(week: int) -> str:
     return f"""\
-## Pipeline (`PIPE-{QUARTER}.yml`)
+## Pipeline (`YML/ASIS/YML-2026Q4.yml`)
 
 {pipeline_para()}
 
