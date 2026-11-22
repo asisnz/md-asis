@@ -9,7 +9,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'CAN/TREE-2026Q3.json'
+      - 'JSON/ASIS/JSON-2026Q4.json'
   workflow_dispatch: {}
 
 permissions:
@@ -20,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.JSON_PAT }}
+          submodules: true
 
       - uses: actions/setup-python@v5
         with:

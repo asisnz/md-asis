@@ -31,6 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.JSON_PAT }}
+          submodules: true
 
       - uses: actions/setup-python@v5
         with:
@@ -81,6 +84,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.JSON_PAT }}
+          submodules: true
 
       - uses: actions/setup-python@v5
         with:
@@ -93,12 +99,21 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- CAN/TREE-2026Q3.json
+          # Commit updated JSON to the submodule repo first
+          cd JSON
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -- ASIS/JSON-2026Q4.json
           if git diff --cached --quiet; then
             echo "No value changes this run — nothing to commit."
             exit 0
           fi
           git commit -m "chore(step-1b): refresh subtype values from feedback"
+          git push
+          cd ..
+          # Update the submodule pointer in the parent repo
+          git add -- JSON
+          git commit -m "chore(step-1b): update JSON submodule pointer"
           for attempt in 1 2 3 4 5; do
             if git push; then
               exit 0

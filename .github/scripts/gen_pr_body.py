@@ -159,7 +159,7 @@ def pipeline_para() -> str:
 
 
 def tree_para() -> str:
-    with open(f"CAN/TREE-{QUARTER}.json", encoding="utf-8") as f:
+    with open("JSON/ASIS/JSON-2026Q4.json", encoding="utf-8") as f:
         data = json.load(f)
     conns = data.get("connections", {})
     own = list(conns.get("own", {}).keys())
@@ -278,7 +278,7 @@ def gen_pr_body(week: int) -> str:
 
 {pipe_mermaid()}
 
-## Content Strategy Tree (`CAN/TREE-{QUARTER}.json`)
+## Content Strategy Tree (`JSON/ASIS/JSON-2026Q4.json`)
 
 {tree_para()}
 

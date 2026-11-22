@@ -29,7 +29,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 QUARTER = "2026Q3"
-TREE_FILE = REPO_ROOT / "CAN" / f"TREE-{QUARTER}.json"
+TREE_FILE = REPO_ROOT / "JSON" / "ASIS" / "JSON-2026Q4.json"
 SECONDS_BETWEEN_CALLS = 30
 REQUEST_TIMEOUT = 90
 ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
