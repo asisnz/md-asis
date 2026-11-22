@@ -107,6 +107,7 @@ jobs:
           BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
           # Commit CSV rows to the CSV submodule (with rebase-retry for concurrent runs)
           cd CSV
+          git checkout main
           git config user.name "$BOT_NAME"
           git config user.email "$BOT_EMAIL"
           git add -- ASIS/CSV-2026Q4.csv
@@ -121,6 +122,7 @@ jobs:
           cd ..
           # Commit any tree value changes to the JSON submodule
           cd JSON
+          git checkout main
           git config user.name "$BOT_NAME"
           git config user.email "$BOT_EMAIL"
           git add -- ASIS/JSON-2026Q4.json
