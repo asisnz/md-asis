@@ -170,10 +170,10 @@
 </main>
 
 <script>
-const OWNER  = "asisnz";
-const REPO   = "md-asis";
+const OWNER  = "jayreck996";
+const REPO   = "XLS";
 const TOKEN  = "__REVIEW_PAT__".startsWith("__") ? (window.__MD_ASIS__ || "") : "__REVIEW_PAT__";
-const CSV_PATH = `COULD/TABLE-2026Q3.csv`;
+const CSV_PATH = `ASIS/XLS-2026Q4.xls`;
 const CSV_URL  = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${CSV_PATH}`;
 
 // RFC 4180 compliant CSV parser — handles quoted fields with embedded
@@ -355,7 +355,7 @@ async function load() {
   csvRows    = parseCSV(text);
   const rows = csvRows;
 
-  const qMatch = CSV_URL.match(/TABLE-(\d{4})(Q\d)\.csv/i);
+  const qMatch = CSV_URL.match(/XLS-(\d{4})(Q\d)\.xls/i);
   const qLabel = qMatch ? `${qMatch[2]} ${qMatch[1]}` : "";
   function syncWeekLabel() {
     const w = document.querySelector("#f-week select")?.value || String(latestWeek);
