@@ -11,6 +11,30 @@ REQUIRED FORMAT FOR EACH ASSET ENTRY:
 
 ####### <!-- ANCHOR MARKER - ADD ALL NEW ASSET ENTRIES DIRECTLY BELOW THIS LINE, NEVER DELETE OR EDIT PREVIOUS ASSET ENTRIES-->
 
+## ASSET:asis 2026-11-22 → XLS rename, Pages fix, media extracted to IMG/PDF submodules
+
+**`jayreck996/CSV` renamed to `jayreck996/XLS`:**
+- GitHub repo renamed via API; files renamed `ASIS/CSV-2026Q4.csv` → `ASIS/XLS-2026Q4.xls`, `REDWOLF/CSV-2026Q4.csv` → `REDWOLF/XLS-2026Q4.xls`.
+- All 10 workflow files updated: `CSV_PAT` → `XLS_PAT`, `insteadOf` URLs, `git add/cd/checkout` paths, inline Python `csv_path` refs.
+- All scripts updated: `gen_posts.py`, `update_tree_values.py`, `gen_media.py`, `gen_pr_body.py` — `TABLE_PATH` now points to `XLS/*/XLS-2026Q4.xls`.
+- `XLS_PAT` secret set on both `redwolfnz/md-redwolf` and `asisnz/md-asis` (same token as former `CSV_PAT`).
+
+**Pages review site fixed (`index.html`):**
+- `OWNER` → `jayreck996`, `REPO` → `XLS`, `CSV_PATH` → `ASIS/XLS-2026Q4.xls` (was `COULD/TABLE-2026Q3.csv` — stale Q3 path, caused GitHub API 404 error).
+- Quarter-label regex updated for `.xls` extension.
+- `deploy-pages.yml`: inject `XLS_PAT` (has write access to private `jayreck996/XLS`); was `MD_ASIS` which had no access to the submodule repo.
+- Same fix applied to `redwolfnz/md-redwolf` (path `REDWOLF/XLS-2026Q4.xls`, error was "Cannot read properties of undefined").
+
+**Media extracted from `MAY/media/` to two new public submodules:**
+- `jayreck996/IMG` (public) — PNG and GIF files; `REDWOLF/` (82 files) and `ASIS/` (62 files).
+- `jayreck996/PDF` (public) — PDF carousels; `REDWOLF/` (9 files) and `ASIS/` (6 files).
+- Both added as submodules at `IMG/` and `PDF/` in both org repos.
+- `MAY/media/2026Q3/` removed from both parent repos.
+- `gen_media.py`: `MEDIA_DIR`/`PAGES_BASE` replaced with `IMG_DIR`/`PDF_DIR` and `IMG_BASE`/`PDF_BASE`; files routed by extension (`.pdf` → `PDF_DIR`, all others → `IMG_DIR`). Media URLs now `raw.githubusercontent.com/jayreck996/IMG|PDF/main/REDWOLF|ASIS/{filename}`.
+- `generate-media.yml`: "Initialise submodules" extended with `IMG_PAT`/`PDF_PAT` insteadOf lines and `IMG`/`PDF` in submodule update list; commit step now commits IMG, PDF, XLS submodules separately before updating parent pointer.
+- Existing media URLs in `XLS/ASIS/XLS-2026Q4.xls` (15 rows) rewritten from GitHub Pages paths to new raw URLs.
+- Requires `IMG_PAT` and `PDF_PAT` secrets (fine-grained, `jayreck996/IMG` and `jayreck996/PDF`, Contents: Read+Write) set on both org repos.
+
 ## ASSET:asis 2026-11-22 → submodule refactor: shared data extracted into 4 private jayreck996 repos; all workflows hardened for concurrent runs
 
 **Submodule repos created under `jayreck996/`:**
