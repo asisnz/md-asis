@@ -24,7 +24,7 @@ import json
 import os
 import time
 import requests
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 QUARTER    = "2026Q3"
@@ -167,14 +167,16 @@ def main() -> None:
 
     url_map: dict[str, str] = {}
     for f in all_files:
-        name = Path(f["path"]).name
-        out  = (PDF_DIR if name.lower().endswith(".pdf") else IMG_DIR) / name
+        suffix = Path(f["path"]).suffix.lower()
+        ts     = datetime.now()
+        name   = f"{ts.strftime('%Y%m%d-%H%M%S')}-{ts.strftime('%f')[:3]}{suffix}"
+        out    = (PDF_DIR if suffix == ".pdf" else IMG_DIR) / name
         out.write_bytes(base64.b64decode(f["content_b64"]))
         print(f"  wrote {out} ({out.stat().st_size // 1024} KB)")
         item = f["item"]
-        base = PDF_BASE if name.lower().endswith(".pdf") else IMG_BASE
+        base = PDF_BASE if suffix == ".pdf" else IMG_BASE
         url  = f"{base}/{name}"
-        if item not in url_map or out.suffix in (".pdf", ".gif"):
+        if item not in url_map or suffix in (".pdf", ".gif"):
             url_map[item] = url
 
     for row in rows:
