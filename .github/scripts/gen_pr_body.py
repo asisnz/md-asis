@@ -23,7 +23,7 @@ from pathlib import Path
 
 QUARTER = "2026Q3"
 TABLE   = "CSV/ASIS/CSV-2026Q4.csv"
-ASSET   = f"MIGHT/ASSET-{QUARTER}.md"
+ASSET   = "ASSET-2026Q4.md"
 PIPE    = f"PIPE-{QUARTER}.yml"
 
 FETCH_ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
@@ -300,7 +300,7 @@ def gen_pr_body(week: int) -> str:
 
 {connection_activity(week)}
 
-## Assets (`MIGHT/ASSET-{QUARTER}.md`)
+## Assets (`ASSET-2026Q4.md`)
 
 {asset_para()}
 
