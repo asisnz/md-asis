@@ -13,3 +13,9 @@
 [submodule "JSONL"]
 	path = JSONL
 	url = https://github.com/jayreck996/JSONL.git
+[submodule "IMG"]
+	path = IMG
+	url = https://github.com/jayreck996/IMG.git
+[submodule "PDF"]
+	path = PDF
+	url = https://github.com/jayreck996/PDF.git

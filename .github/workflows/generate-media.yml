@@ -36,11 +36,15 @@ jobs:
           git config --global url."https://${{ secrets.XLS_PAT }}@github.com/jayreck996/XLS".insteadOf "https://github.com/jayreck996/XLS"
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
-          git submodule update --init -- XLS JSON YML JSONL
-          git -C JSON checkout -B main origin/main
-          git -C XLS  checkout -B main origin/main
-          git -C YML  checkout -B main origin/main
+          git config --global url."https://${{ secrets.IMG_PAT }}@github.com/jayreck996/IMG".insteadOf "https://github.com/jayreck996/IMG"
+          git config --global url."https://${{ secrets.PDF_PAT }}@github.com/jayreck996/PDF".insteadOf "https://github.com/jayreck996/PDF"
+          git submodule update --init -- XLS JSON YML JSONL IMG PDF
+          git -C JSON  checkout -B main origin/main
+          git -C XLS   checkout -B main origin/main
+          git -C YML   checkout -B main origin/main
           git -C JSONL checkout -B main origin/main
+          git -C IMG   checkout -B main origin/main
+          git -C PDF   checkout -B main origin/main
 
       - uses: actions/setup-python@v5
         with:
@@ -72,10 +76,40 @@ jobs:
           WEEK=${{ steps.week.outputs.num }}
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Commit XLS media URL updates to the submodule first
+          BOT_NAME="github-actions[bot]"
+          BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
+          # Commit new images to IMG submodule
+          cd IMG
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+          git add -- ASIS/
+          if ! git diff --cached --quiet; then
+            git commit -m "media(w${WEEK}): add week ${WEEK} images"
+            for attempt in 1 2 3 4 5; do
+              if git push; then break; fi
+              echo "IMG push rejected (attempt $attempt) -- rebasing..."
+              git fetch origin main && git rebase origin/main
+            done
+          fi
+          cd ..
+          # Commit new PDFs to PDF submodule
+          cd PDF
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+          git add -- ASIS/
+          if ! git diff --cached --quiet; then
+            git commit -m "media(w${WEEK}): add week ${WEEK} PDFs"
+            for attempt in 1 2 3 4 5; do
+              if git push; then break; fi
+              echo "PDF push rejected (attempt $attempt) -- rebasing..."
+              git fetch origin main && git rebase origin/main
+            done
+          fi
+          cd ..
+          # Commit XLS media URL updates
           cd XLS
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
           git add -- ASIS/XLS-2026Q4.xls
           if ! git diff --cached --quiet; then
             git commit -m "media(w${WEEK}): update media URLs"
@@ -86,7 +120,7 @@ jobs:
             done
           fi
           cd ..
-          git add MAY/media/2026Q3/ XLS
+          git add IMG PDF XLS
           git diff --cached --quiet && echo "nothing to commit" && exit 0
           git commit -m "media(w${WEEK}): generate week ${WEEK} assets"
           for attempt in 1 2 3 4 5; do

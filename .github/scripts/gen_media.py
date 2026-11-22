@@ -162,15 +162,18 @@ def main() -> None:
         print("No files returned from Mac mini.")
         return
 
-    MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    PDF_DIR.mkdir(parents=True, exist_ok=True)
 
     url_map: dict[str, str] = {}
     for f in all_files:
-        out = MEDIA_DIR / Path(f["path"]).name
+        name = Path(f["path"]).name
+        out  = (PDF_DIR if name.lower().endswith(".pdf") else IMG_DIR) / name
         out.write_bytes(base64.b64decode(f["content_b64"]))
         print(f"  wrote {out} ({out.stat().st_size // 1024} KB)")
         item = f["item"]
-        url  = f"{PAGES_BASE}/{out.name}"
+        base = PDF_BASE if name.lower().endswith(".pdf") else IMG_BASE
+        url  = f"{base}/{name}"
         if item not in url_map or out.suffix in (".pdf", ".gif"):
             url_map[item] = url
 
