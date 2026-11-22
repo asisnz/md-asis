@@ -10,3 +10,6 @@
 [submodule "YML"]
 	path = YML
 	url = https://github.com/jayreck996/YML.git
+[submodule "JSONL"]
+	path = JSONL
+	url = https://github.com/jayreck996/JSONL.git

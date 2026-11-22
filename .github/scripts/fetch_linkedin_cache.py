@@ -2,20 +2,12 @@
 """
 Called by .github/workflows/fetch-linkedin.yml (weekly cron).
 
-Reads CAN/TREE-2026Q3.json's connections{}, maps each to its fixed slug
-(same table as .claude/skills/fetch-linkedin/SKILL.md — keep both in
-sync if connections{} ever changes), and calls py-asis's listener
-once per connection, sequentially with a pause between calls, prepending
-each successful response as a new dated entry at the top of the single
-MAY/LOG-2026Q3.log (one `## <fetchedAt> <SLUG>` entry per connection per run).
+Reads JSON/ASIS/JSON-2026Q4.json's connections{}, maps each to its fixed
+slug, and calls py-asis's listener once per connection, appending each
+successful response as a new JSON line to JSONL/ASIS/<SLUG>.jsonl.
 
-A failed/unreachable call for one connection is logged and skipped —
-it never fails the whole job, and never touches that connection's
-existing log. A missing log file is exactly what the fetch-linkedin
-skill (STEP 1a) already treats as MISSING.
-
-Quarter is hardcoded as 2026Q3 — update it at quarter rollover alongside
-the rest of PIPE-2026Q3.yml's QUARTER ROLLOVER section.
+One file per slug — oldest entry first (standard JSONL append order).
+A failed/unreachable call for one connection is logged and skipped.
 """
 
 import json
@@ -28,12 +20,10 @@ import urllib.error
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-QUARTER = "2026Q3"
 TREE_FILE = REPO_ROOT / "JSON" / "ASIS" / "JSON-2026Q4.json"
+JSONL_DIR = REPO_ROOT / "JSONL" / "ASIS"
 SECONDS_BETWEEN_CALLS = 30
 REQUEST_TIMEOUT = 90
-ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
-LOG_PATH = REPO_ROOT / "MAY" / f"LOG-{QUARTER}.log"
 
 # Must match .claude/skills/fetch-linkedin/SKILL.md's mapping table.
 SLUG_MAP = {
@@ -97,25 +87,13 @@ def fetch_one(base_url: str, slug: str, company_name: str, url: str,
         return None
 
 
-def prepend_entry(log_path: Path, slug: str, data: dict) -> None:
-    """Prepend a new ## <fetchedAt> <SLUG> / <compact JSON> entry to the log."""
-    fetched_at = data.get("fetchedAt", "unknown")
-    compact = json.dumps(data, separators=(",", ":"))
-    new_entry = f"## {fetched_at} {slug}\n{compact}\n"
-
-    if log_path.exists():
-        text = log_path.read_text(encoding="utf-8")
-        marker_pos = text.find(ANCHOR)
-        if marker_pos == -1:
-            # Malformed log — append at end as fallback
-            log_path.write_text(text.rstrip() + f"\n\n{new_entry}", encoding="utf-8")
-            return
-        insert_at = marker_pos + len(ANCHOR)
-        text = text[:insert_at] + f"\n\n{new_entry}" + text[insert_at:].lstrip("\n")
-    else:
-        text = f"FETCH LOG — {QUARTER}\n\n{ANCHOR}\n\n{new_entry}"
-
-    log_path.write_text(text, encoding="utf-8")
+def append_entry(jsonl_dir: Path, slug: str, data: dict) -> None:
+    """Append one JSON line to JSONL/ASIS/<slug>.jsonl."""
+    jsonl_dir.mkdir(parents=True, exist_ok=True)
+    path = jsonl_dir / f"{slug}.jsonl"
+    compact = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(compact + "\n")
 
 
 def main() -> int:
@@ -144,9 +122,9 @@ def main() -> int:
                 print(f"slug={slug}: non-JSON response — skipping", file=sys.stderr)
                 skipped += 1
                 continue
-            prepend_entry(LOG_PATH, slug, parsed)
+            append_entry(JSONL_DIR, slug, parsed)
             fetched += 1
-            print(f"slug={slug}: prepended entry to {LOG_PATH.relative_to(REPO_ROOT)}")
+            print(f"slug={slug}: appended entry to JSONL/ASIS/{slug}.jsonl")
 
         if i < len(connections) - 1:
             time.sleep(SECONDS_BETWEEN_CALLS)

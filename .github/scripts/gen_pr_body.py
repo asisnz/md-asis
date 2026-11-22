@@ -26,8 +26,6 @@ TABLE   = "CSV/ASIS/CSV-2026Q4.csv"
 ASSET   = "ASSET-2026Q4.md"
 PIPE    = "YML/ASIS/YML-2026Q4.yml"
 
-FETCH_ANCHOR = "####### <!-- ANCHOR MARKER - ADD ALL NEW ENTRIES DIRECTLY BELOW THIS LINE -->"
-
 SLUG_ORDER = [
     "ASISNZ", "NZSA", "ASIS", "NZPOLICE",
     "JOHNSON", "GALLAGHER", "INNERRANGE", "BOSCH", "ICT", "JACQUES",
@@ -57,19 +55,18 @@ def mermaid_block() -> str:
 
 
 def _parse_latest_entry(slug: str) -> dict | None:
-    """Newest entry for this connection in the single fetch log (newest first)."""
-    log_path = Path(f"MAY/LOG-{QUARTER}.log")
-    if not log_path.exists():
+    """Newest entry for this connection from JSONL/ASIS/<slug>.jsonl (last line)."""
+    jsonl_path = Path(f"JSONL/ASIS/{slug}.jsonl")
+    if not jsonl_path.exists():
         return None
-    text = log_path.read_text(encoding="utf-8")
-    after = text[text.find(FETCH_ANCHOR) + len(FETCH_ANCHOR):]
-    for m in re.finditer(r"## \S+ (\S+)\n(\{[^\n]+\})", after):
-        if m.group(1) != slug:
+    for line in reversed(jsonl_path.read_text(encoding="utf-8").splitlines()):
+        line = line.strip()
+        if not line:
             continue
         try:
-            return json.loads(m.group(2))
+            return json.loads(line)
         except json.JSONDecodeError:
-            return None
+            continue
     return None
 
 

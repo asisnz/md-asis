@@ -49,23 +49,28 @@ jobs:
 
       - name: Commit updated cache files
         run: |
+          # Commit new JSONL entries to the submodule first
+          cd JSONL
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- 'MAY/LOG-2026Q3.log'
+          git add -- ASIS/
           if git diff --cached --quiet; then
             echo "No cache changes this run — nothing to commit."
             exit 0
           fi
           git commit -m "chore(linkedin-cache): weekly fetch-linkedin snapshot update"
-          # Retry with rebase on a rejected push -- confirmed this
-          # happens for real: a run's entire fetched batch was lost
-          # once already when an unrelated commit landed on main
-          # while this ~6-minute job was still running, and the bare
-          # `git push` here had no fallback.
           for attempt in 1 2 3 4 5; do
-            if git push; then
-              exit 0
-            fi
+            if git push; then break; fi
+            echo "JSONL push rejected (attempt $attempt) -- rebasing..."
+            git fetch origin main && git rebase origin/main
+          done
+          cd ..
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -- JSONL
+          git commit -m "chore(linkedin-cache): update JSONL submodule pointer"
+          for attempt in 1 2 3 4 5; do
+            if git push; then exit 0; fi
             echo "Push rejected (attempt $attempt) -- rebasing onto origin/main and retrying..."
             git fetch origin main
             git rebase origin/main
