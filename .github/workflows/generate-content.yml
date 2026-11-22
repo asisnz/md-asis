@@ -54,7 +54,7 @@ jobs:
           git config --global url."https://${{ secrets.CSV_PAT }}@github.com/jayreck996/CSV".insteadOf "https://github.com/jayreck996/CSV"
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
-          git submodule update --init --recursive
+          git submodule update --init -- CSV JSON YML JSONL
 
       - uses: actions/setup-python@v5
         with:
