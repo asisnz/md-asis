@@ -1,3 +1,6 @@
 [submodule "py-asis"]
 	path = py-asis
 	url = https://github.com/asisnz/py-asis.git
+[submodule "JSON"]
+	path = JSON
+	url = https://github.com/jayreck996/JSON.git
