@@ -11,10 +11,7 @@ name: fetch-linkedin
 # CF_ACCESS_CLIENT_SECRET, LISTENER_SHARED_SECRET.
 
 on:
-  schedule:
-    # Sunday 20:00 UTC — before the Monday (NZT) batch day. Adjust if
-    # the batch day changes.
-    - cron: "0 20 * * 0"
+  # schedule disabled — pipeline moved to jayreck996/md-post
   workflow_dispatch:
     inputs:
       skip_fetch:

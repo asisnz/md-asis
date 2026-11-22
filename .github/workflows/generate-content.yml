@@ -20,8 +20,7 @@ name: Generate weekly content
 #   (Step 2D uses the Mac mini's Claude login — no additional secrets needed)
 
 on:
-  schedule:
-    - cron: '0 20 * * 1'   # Monday 8pm UTC = Tuesday 8am NZST (UTC+12)
+  # schedule disabled — pipeline moved to jayreck996/md-post
   workflow_dispatch:
     inputs:
       week:
