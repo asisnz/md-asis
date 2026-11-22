@@ -4,9 +4,9 @@
 [submodule "JSON"]
 	path = JSON
 	url = https://github.com/jayreck996/JSON.git
-[submodule "CSV"]
-	path = CSV
-	url = https://github.com/jayreck996/CSV.git
+[submodule "XLS"]
+	path = XLS
+	url = https://github.com/jayreck996/XLS.git
 [submodule "YML"]
 	path = YML
 	url = https://github.com/jayreck996/YML.git

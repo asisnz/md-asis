@@ -28,7 +28,7 @@ from datetime import date
 from pathlib import Path
 
 QUARTER    = "2026Q3"
-TABLE_PATH = "CSV/ASIS/CSV-2026Q4.csv"
+TABLE_PATH = "XLS/ASIS/XLS-2026Q4.xls"
 MEDIA_DIR  = Path(f"MAY/media/{QUARTER}")
 SKILL_PATH = Path(".claude/skills/generate-media/SKILL.md")
 LOGO_PATH  = Path("logo.svg")

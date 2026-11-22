@@ -22,7 +22,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 QUARTER = "2026Q3"
-TABLE   = "CSV/ASIS/CSV-2026Q4.csv"
+TABLE   = "XLS/ASIS/XLS-2026Q4.xls"
 ASSET   = "ASSET-2026Q4.md"
 PIPE    = "YML/ASIS/YML-2026Q4.yml"
 
@@ -285,7 +285,7 @@ def gen_pr_body(week: int) -> str:
 {mermaid_block()}
 <!-- TREE-END -->
 
-## Posts (`CSV/ASIS/CSV-2026Q4.csv`)
+## Posts (`XLS/ASIS/XLS-2026Q4.xls`)
 
 {posts_para(week)}
 

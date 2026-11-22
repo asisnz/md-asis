@@ -37,12 +37,12 @@ jobs:
       - name: Initialise submodules
         run: |
           git config --global url."https://${{ secrets.JSON_PAT }}@github.com/jayreck996/JSON".insteadOf "https://github.com/jayreck996/JSON"
-          git config --global url."https://${{ secrets.CSV_PAT }}@github.com/jayreck996/CSV".insteadOf "https://github.com/jayreck996/CSV"
+          git config --global url."https://${{ secrets.XLS_PAT }}@github.com/jayreck996/XLS".insteadOf "https://github.com/jayreck996/XLS"
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
-          git submodule update --init -- CSV JSON YML JSONL
+          git submodule update --init -- XLS JSON YML JSONL
           git -C JSON checkout -B main origin/main
-          git -C CSV  checkout -B main origin/main
+          git -C XLS  checkout -B main origin/main
           git -C YML  checkout -B main origin/main
           git -C JSONL checkout -B main origin/main
 
@@ -106,12 +106,12 @@ jobs:
       - name: Initialise submodules
         run: |
           git config --global url."https://${{ secrets.JSON_PAT }}@github.com/jayreck996/JSON".insteadOf "https://github.com/jayreck996/JSON"
-          git config --global url."https://${{ secrets.CSV_PAT }}@github.com/jayreck996/CSV".insteadOf "https://github.com/jayreck996/CSV"
+          git config --global url."https://${{ secrets.XLS_PAT }}@github.com/jayreck996/XLS".insteadOf "https://github.com/jayreck996/XLS"
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
-          git submodule update --init -- CSV JSON YML JSONL
+          git submodule update --init -- XLS JSON YML JSONL
           git -C JSON checkout -B main origin/main
-          git -C CSV  checkout -B main origin/main
+          git -C XLS  checkout -B main origin/main
           git -C YML  checkout -B main origin/main
           git -C JSONL checkout -B main origin/main
 
