@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.JSON_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Initialise submodules
         run: |
@@ -98,7 +98,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.JSON_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Initialise submodules
         run: |
@@ -130,7 +130,11 @@ jobs:
             exit 0
           fi
           git commit -m "chore(step-1b): refresh subtype values from feedback"
-          git push
+          for attempt in 1 2 3 4 5; do
+            if git push; then break; fi
+            echo "JSON push rejected (attempt $attempt) -- rebasing..."
+            git fetch origin main && git rebase origin/main
+          done
           cd ..
           # Update the submodule pointer in the parent repo
           git add -- JSON
