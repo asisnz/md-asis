@@ -169,7 +169,7 @@ def main() -> None:
     for f in all_files:
         suffix = Path(f["path"]).suffix.lower()
         ts     = datetime.now()
-        name   = f"{ts.strftime('%Y%m%d-%H%M%S')}-{ts.strftime('%f')[:3]}{suffix}"
+        name   = f"{ts.strftime('%Y%m%d%H%M%S')}{ts.strftime('%f')[:3]}{suffix}"
         out    = (PDF_DIR if suffix == ".pdf" else IMG_DIR) / name
         out.write_bytes(base64.b64decode(f["content_b64"]))
         print(f"  wrote {out} ({out.stat().st_size // 1024} KB)")
