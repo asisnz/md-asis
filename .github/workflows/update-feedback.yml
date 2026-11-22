@@ -14,7 +14,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.JSON_PAT }}
-          submodules: recursive
+
+      - name: Initialise submodules
+        run: |
+          git config --global url."https://${{ secrets.JSON_PAT }}@github.com/jayreck996/JSON".insteadOf "https://github.com/jayreck996/JSON"
+          git config --global url."https://${{ secrets.JSON_PAT }}@github.com/jayreck996/CSV".insteadOf "https://github.com/jayreck996/CSV"
+          git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
+          git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
+          git submodule update --init --recursive
 
       - name: Update feedback in CSV
         env:
