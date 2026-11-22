@@ -30,6 +30,10 @@ jobs:
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
           git submodule update --init -- CSV JSON YML JSONL
+          git -C JSON checkout -B main origin/main
+          git -C CSV  checkout -B main origin/main
+          git -C YML  checkout -B main origin/main
+          git -C JSONL checkout -B main origin/main
 
       - uses: actions/setup-python@v5
         with:

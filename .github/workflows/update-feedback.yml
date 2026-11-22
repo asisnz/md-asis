@@ -22,6 +22,10 @@ jobs:
           git config --global url."https://${{ secrets.YML_PAT }}@github.com/jayreck996/YML".insteadOf "https://github.com/jayreck996/YML"
           git config --global url."https://${{ secrets.JSONL_PAT }}@github.com/jayreck996/JSONL".insteadOf "https://github.com/jayreck996/JSONL"
           git submodule update --init -- CSV JSON YML JSONL
+          git -C JSON checkout -B main origin/main
+          git -C CSV  checkout -B main origin/main
+          git -C YML  checkout -B main origin/main
+          git -C JSONL checkout -B main origin/main
 
       - name: Update feedback in CSV
         env:
@@ -68,7 +72,6 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           cd CSV
-          git checkout main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -- ASIS/CSV-2026Q4.csv
