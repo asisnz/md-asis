@@ -27,6 +27,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.JSON_PAT }}
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -58,7 +61,17 @@ jobs:
           WEEK=${{ steps.week.outputs.num }}
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add MAY/media/2026Q3/ COULD/TABLE-2026Q3.csv
+          # Commit CSV media URL updates to the submodule first
+          cd CSV
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -- ASIS/CSV-2026Q4.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "media(w${WEEK}): update media URLs"
+            git push
+          fi
+          cd ..
+          git add MAY/media/2026Q3/ CSV
           git diff --cached --quiet && echo "nothing to commit" && exit 0
           git commit -m "media(w${WEEK}): generate week ${WEEK} assets"
           git pull --rebase

@@ -27,7 +27,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 QUARTER      = "2026Q3"
-TABLE_PATH   = f"COULD/TABLE-{QUARTER}.csv"
+TABLE_PATH   = "CSV/ASIS/CSV-2026Q4.csv"
 TREE_PATH    = "JSON/ASIS/JSON-2026Q4.json"
 LOG_DIR      = Path("MAY")
 SKILL_PATH   = Path(".claude/skills/generate-post/SKILL.md")

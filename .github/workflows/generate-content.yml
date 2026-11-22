@@ -47,7 +47,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.JSON_PAT }}
-          submodules: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -88,7 +88,7 @@ jobs:
           WEEK=${{ steps.week.outputs.num }}
           RANGE=$(python3 -c "
           import csv
-          rows = list(csv.DictReader(open('COULD/TABLE-2026Q3.csv')))
+          rows = list(csv.DictReader(open('CSV/ASIS/CSV-2026Q4.csv')))
           week_rows = [r for r in rows if r['week'] == '$WEEK']
           if week_rows:
               items = [r['item'] for r in week_rows]
@@ -96,17 +96,33 @@ jobs:
           else:
               print('no posts')
           ")
-          # Commit any tree value changes to the JSON submodule first
+          BOT_NAME="github-actions[bot]"
+          BOT_EMAIL="github-actions[bot]@users.noreply.github.com"
+          # Commit CSV rows to the CSV submodule (with rebase-retry for concurrent runs)
+          cd CSV
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
+          git add -- ASIS/CSV-2026Q4.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "content(w${WEEK}): append week ${WEEK} rows"
+            for attempt in 1 2 3 4 5; do
+              if git push; then break; fi
+              echo "CSV push rejected (attempt $attempt) -- rebasing..."
+              git fetch origin main && git rebase origin/main
+            done
+          fi
+          cd ..
+          # Commit any tree value changes to the JSON submodule
           cd JSON
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "$BOT_NAME"
+          git config user.email "$BOT_EMAIL"
           git add -- ASIS/JSON-2026Q4.json
           if ! git diff --cached --quiet; then
             git commit -m "content(w${WEEK}): update tree values"
             git push
           fi
           cd ..
-          git add COULD/TABLE-2026Q3.csv JSON
+          git add CSV JSON
           git commit -m "content(w${WEEK}): generate week ${WEEK} batch — ${RANGE}"
           # Push directly to main; rebase-retry handles concurrent bot commits.
           for i in 1 2 3; do

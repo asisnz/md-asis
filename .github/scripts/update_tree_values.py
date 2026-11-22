@@ -36,7 +36,7 @@ from pathlib import Path
 QUARTER = "2026Q3"
 ROOT = Path(__file__).resolve().parents[2]
 TREE_PATH = ROOT / "JSON" / "ASIS" / "JSON-2026Q4.json"
-TABLE_PATH = ROOT / "COULD" / f"TABLE-{QUARTER}.csv"
+TABLE_PATH = ROOT / "CSV" / "ASIS" / "CSV-2026Q4.csv"
 
 SCORES = {"win": 1, "tie": 0, "lost": -1}
 GROUPS = ("own", "associations", "partners")

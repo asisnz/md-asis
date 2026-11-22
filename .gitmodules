@@ -4,3 +4,6 @@
 [submodule "JSON"]
 	path = JSON
 	url = https://github.com/jayreck996/JSON.git
+[submodule "CSV"]
+	path = CSV
+	url = https://github.com/jayreck996/CSV.git
